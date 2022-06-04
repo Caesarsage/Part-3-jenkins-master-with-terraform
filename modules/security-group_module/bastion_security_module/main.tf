@@ -5,7 +5,7 @@ variable "vpc_id" {}
 resource "aws_security_group" "bastion_host" {
   name        = "bastion_sg_${var.vpc_name}"
   description = "Allow SSH from anywhere"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   egress {
     from_port   = 0
@@ -15,13 +15,13 @@ resource "aws_security_group" "bastion_host" {
   }
 
   ingress {
-    from_port       = 22
-    to_port         = 22
-    protocol        = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name   = "bastion_sg_${var.vpc_name}"
+    Name = "bastion_sg_${var.vpc_name}"
   }
 }

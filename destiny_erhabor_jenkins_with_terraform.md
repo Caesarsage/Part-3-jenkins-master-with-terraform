@@ -305,7 +305,7 @@ resource "aws_security_group" "alb_jenkins_sg" {
 - **module/security-group_module/jenkins_master_security/main.tf**
 
 ```
-variable "baston_host_sg_id" {}
+variable "bastion_host_sg_id" {}
 variable "alb_jenkins_sg_id" {}
 variable "vpc_name" {}
 variable "vpc_id" {}
@@ -319,7 +319,7 @@ resource "aws_security_group" "jenkins_master_sg" {
     from_port       = "22"
     to_port         = "22"
     protocol        = "tcp"
-    security_groups = [var.baston_host_sg_id]
+    security_groups = [var.bastion_host_sg_id]
   }
 
   ingress {
@@ -352,7 +352,7 @@ output "jenkins_master_id" {
 Enter the following code in **module/bastion_module/main.tf** and saves its variable and output in the variable and output file inside the module folder
 
 ```
-variable "baston_host_sg_id" {}
+variable "bastion_host_sg_id" {}
 variable "subnet_public" {}
 
 # create key pair
@@ -383,7 +383,7 @@ resource "aws_instance" "bastion" {
   ami           = data.aws_ami.bastion.id
   instance_type = "t2.micro"
   key_name = aws_key_pair.terraform-p-key.id
-  vpc_security_group_ids = [var.baston_host_sg_id]
+  vpc_security_group_ids = [var.bastion_host_sg_id]
   subnet_id = element(var.subnet_public, 0).id
   associate_public_ip_address = true
 

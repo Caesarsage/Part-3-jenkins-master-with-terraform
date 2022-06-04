@@ -8,21 +8,21 @@ data "aws_ami" "jenkins-master" {
   most_recent = true
   owners      = ["self"]
 }
-  
+
 # create key pair
 resource "tls_private_key" "rsa" {
   algorithm = "RSA"
-  rsa_bits = 4096
+  rsa_bits  = 4096
 }
 
 // Management Key Pair
 resource "aws_key_pair" "terraform-jenkins-key" {
   key_name   = "terraform-jenkins-key"
-  public_key = "${tls_private_key.rsa.public_key_openssh}"
+  public_key = tls_private_key.rsa.public_key_openssh
 }
 
 resource "local_file" "terraform-server-private-key" {
-  content = "${tls_private_key.rsa.private_key_pem}"
+  content  = tls_private_key.rsa.private_key_pem
   filename = "terraform-jenkins-key"
 }
 
@@ -40,7 +40,7 @@ resource "aws_instance" "jenkins_master" {
   }
 
   tags = {
-    Name   = "jenkins_master"
+    Name = "jenkins_master"
   }
 }
 
@@ -50,8 +50,8 @@ resource "aws_lb" "jenkins_alb" {
   name               = "jenkins-alb"
   load_balancer_type = "application"
   internal           = false
-  subnets = [for subnet in var.subnet_public : subnet.id]
-  security_groups           = ["${var.alb_jenkins_sg_id}"]
+  subnets            = [for subnet in var.subnet_public : subnet.id]
+  security_groups    = [var.alb_jenkins_sg_id]
 
   tags = {
     Name = "jenkins-lb"
@@ -66,7 +66,7 @@ resource "aws_lb_target_group" "jenkins-lb-target-group" {
   vpc_id   = var.vpc_id
 
   # Configure Health Check for Target Group
-   health_check {
+  health_check {
     path                = "/"
     protocol            = "HTTP"
     matcher             = "403"
@@ -99,7 +99,7 @@ resource "aws_lb_listener" "jenkins_lb_listener" {
   }
 
   tags = {
-    Name   = "jenkins_lb_listener"
+    Name = "jenkins_lb_listener"
   }
 }
 
@@ -107,9 +107,9 @@ resource "aws_lb_listener" "jenkins_lb_listener" {
 # resource "aws_elb" "jenkins_elb" {
 #   instances = [aws_instance.jenkins_master.id]
 
-  
-  
-  
+
+
+
 #   # listener {
 #   #   instance_port      = 8080
 #   #   instance_protocol  = "http"

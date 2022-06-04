@@ -1,4 +1,4 @@
-variable "baston_host_sg_id" {}
+variable "bastion_host_sg_id" {}
 variable "alb_jenkins_sg_id" {}
 variable "vpc_name" {}
 variable "vpc_id" {}
@@ -12,7 +12,7 @@ resource "aws_security_group" "jenkins_master_sg" {
     from_port       = "22"
     to_port         = "22"
     protocol        = "tcp"
-    security_groups = [var.baston_host_sg_id]
+    security_groups = [var.bastion_host_sg_id]
   }
 
   ingress {
@@ -20,7 +20,7 @@ resource "aws_security_group" "jenkins_master_sg" {
     to_port         = "8080"
     protocol        = "tcp"
     security_groups = [var.alb_jenkins_sg_id]
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks     = ["0.0.0.0/0"]
   }
 
   egress {
@@ -31,10 +31,10 @@ resource "aws_security_group" "jenkins_master_sg" {
   }
 
   tags = {
-    Name   = "jenkins_master_sg"
+    Name = "jenkins_master_sg"
   }
 }
 
 output "jenkins_master_id" {
-  value = "${aws_security_group.jenkins_master_sg.id}"
+  value = aws_security_group.jenkins_master_sg.id
 }
